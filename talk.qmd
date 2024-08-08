@@ -1,0 +1,87 @@
+---
+format: revealjs
+title: "epiworld(C++ | R | Py): A fast multi-language library for epidemiological agent-based models"
+---
+
+## About the software 
+
+::: {.columns style="font-size: 80%"}
+::: {.column width="25%"}
+### Header only
+- Built on the C++ standard library.
+- Easy to port to other languages (R, Python).
+:::
+::: {.column width="25%"}
+### A Framework
+- Highly modular.
+- User-defined states and update dynamics.
+:::
+::: {.column width="25%"}
+### Fast
+- Out-of-the-box parallelism.
+- Up to 100 million agents-day per second.
+:::
+::: {.column width="25%"}
+### Complex models
+- Multi-virus.
+- Evolving virus.
+- Heterogeneous populations.
+:::
+:::
+
+Open-source and CDC-funded.
+
+## Compared to other libraries
+
+::: {.columns style="font-size: 80%"}
+::: {.column width="40%"}
+Simulated a network SIR with 50 K agents:
+
+- Covasim (Python): ~ 1 second (although the model is more complex, SIRd).
+- Epiworld is 3x faster than igraph, 14x faster than AnyLogic, and 28x faster than ABM.
+:::
+::: {.column width="60%"}
+![](fig/epiworld-benchmark.png)
+:::
+:::
+ 
+## Short example: Complex model
+
+- Population of 200 K agents in a connected graph.
+
+- Two initial viruses: COVID-19 and the Flu.
+
+- Mutating virus: Flu has 0.0025 probability of mutating. These change the transmission rate.
+
+- Policy: 60% of vaccinated agents.
+
+- NPI: mask mandate triggers when there are over 1,000 infected agents.
+
+- Health equity: Half agents are 10% less likely to become exposed.
+
+- Parallel computing: run 100 replicates in parallel.
+
+## Short example: Complex model (cont.)
+
+## Some decisions:
+
+1. Why C++?
+
+2. Why discrete time?
+
+
+
+## Challenges 
+
+- How to maximize usage?
+
+- How to make it user-friendly?
+
+- Ease of use vs. flexibility vs. speed.
+
+
+## Thanks!
+
+George G. Vega Yon, Ph.D.
+
+- [gvegayon.github.io](https://gvegayon.github.io)
