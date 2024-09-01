@@ -14,13 +14,15 @@ I n this presentation, we will describe the main software design components that
 
 ```{r}
 library(data.table)
-sim_res <- fread("total_hist.tsv")
-sim_res[, incidence := counts - shift(counts, 1, fill = 0), by = state]
+incidence <- fread("transitions.tsv")
+incidence <- incidence[from == "Susceptible" & to == "Exposed"]
 library(ggplot2)
-sim_res[state %in% c("Exposed", "Infected")] |>
-  ggplot(aes(x = date, y = incidence, color = state)) +
+ggplot(incidence, aes(x = date, y = counts)) +
   geom_line() +
-  labs(title = "Epidemiological model",
-       x = "Date",
-       y = "Count")
+  labs(
+    title = "Daily incidence",
+    x = "Date",
+    y = "Count"
+    ) +
+  scale_y_log10()
 ```
