@@ -1,6 +1,15 @@
 ---
-format: revealjs
 title: "epiworld(C++ | R | Py): A fast multi-language library for epidemiological agent-based models"
+format:
+  revealjs:
+    slide-number: true
+author: 
+  - George G. Vega Yon, Ph.D.
+  - Derek Meyer, M.Sc.
+  - Milo Banks
+  - Matthew Samore, Ph.D.
+institute: The University of Utah
+date: 2024-09-03
 ---
 
 ## About the software 

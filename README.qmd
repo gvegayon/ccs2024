@@ -5,4 +5,22 @@ format: gfm
 
 ## From the abstract
 
-I n this presentation, we will describe the main software design components that make epiworld so flexible and fast, discuss the challenges and decisions behind some of its key components, and provide an extended example illustrating its use. We will show how epiworld can be used to build a complex outbreak model with a large networked population featuring an evolving virus that generates multiple variants, heterogeneous susceptibility and recovery rates across the population, and a dynamic non-pharmaceutical intervention that triggers according to the number of infected.
+I n this presentation, we will describe the main software design components that make epiworld so flexible and fast, discuss the challenges and decisions behind some of its key components, and provide an extended example illustrating its use. We will show how epiworld can be used to build a complex outbreak model with a large networked population featuring an evolving virus that generates multiple variants, heterogeneous susceptibility and recovery rates across the population, and a dynamic non-pharmaceutical intervention that triggers according to the n
+
+```{bash}
+./main.o
+```
+
+
+```{r}
+library(data.table)
+sim_res <- fread("total_hist.tsv")
+sim_res[, incidence := counts - shift(counts, 1, fill = 0), by = state]
+library(ggplot2)
+sim_res[state %in% c("Exposed", "Infected")] |>
+  ggplot(aes(x = date, y = incidence, color = state)) +
+  geom_line() +
+  labs(title = "Epidemiological model",
+       x = "Date",
+       y = "Count")
+```
