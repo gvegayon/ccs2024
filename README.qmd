@@ -14,7 +14,7 @@ I n this presentation, we will describe the main software design components that
 
 ```{r}
 library(data.table)
-incidence <- fread("transitions.tsv")
+incidence <- fread("res/transitions.tsv")
 incidence <- incidence[from == "Susceptible" & to == "Exposed"]
 library(ggplot2)
 ggplot(incidence, aes(x = date, y = counts)) +
@@ -25,4 +25,34 @@ ggplot(incidence, aes(x = date, y = counts)) +
     y = "Count"
     ) +
   scale_y_log10()
+```
+
+
+
+```{r}
+#| label: variants
+virus_hist <- fread("res/transmissions.tsv")
+
+# Total transmissions
+daily_virus <- virus_hist[, .(count = .N), by = .(virus, date)]
+daily_virus[, t_rate := as.double(gsub(".+-0\\.", "0.", virus))]
+daily_virus[is.na(t_rate), t_rate := fifelse(
+  virus == "Covid-19", .3, .2
+)]
+
+daily_virus[, vlabel := fifelse(grepl("-0\\.", virus), "Flu-variant", virus)]
+
+ggplot(daily_virus, aes(
+  x = date, y = count, color = t_rate, group=t_rate)) +
+  scale_color_distiller(palette="YlOrRd", direction = 1) +
+  geom_line() +
+  geom_point(aes(shape = vlabel)) +
+  scale_y_log10() +
+  theme_dark() +
+  labs(
+    color = "Transmission\nRate",
+    shape = "Variant",
+    x = "Step (time)",
+    y = "Daily incidence (log10)"
+  )
 ```

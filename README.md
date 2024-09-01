@@ -30,10 +30,10 @@ the n
     Population size     : 200000
     Agents' data        : (none)
     Number of entities  : 0
-    Days (duration)     : 100 (of 100)
-    Number of viruses   : 13819
-    Last run elapsed t  : 535.00ms
-    Last run speed      : 37.36 million agents x day / second
+    Days (duration)     : 180 (of 180)
+    Number of viruses   : 137
+    Last run elapsed t  : 748.00ms
+    Last run speed      : 48.10 million agents x day / second
     Rewiring            : off
 
     Global events:
@@ -43,10 +43,10 @@ the n
     Virus(es):
      - Covid-19
      - Flu
-     ...and 13817 more variants...
+     ...and 135 more variants...
 
     Tool(s):
-     (none)
+     - Vaccine
 
     Model parameters:
      - Avg. Incubation days : 7.0000
@@ -54,21 +54,21 @@ the n
      - Prob. Recovery       : 0.1429
      - Prob. Transmission   : 0.3000
 
-    Distribution of the population at time 100:
-      - (0) Susceptible : 199960 -> 169129
-      - (1) Exposed     :     40 -> 2345
-      - (2) Infected    :      0 -> 3166
-      - (3) Recovered   :      0 -> 25360
+    Distribution of the population at time 180:
+      - (0) Susceptible : 199960 -> 145499
+      - (1) Exposed     :     40 -> 1210
+      - (2) Infected    :      0 -> 1482
+      - (3) Recovered   :      0 -> 51809
 
     Transition Probabilities:
      - Susceptible  1.00  0.00  0.00  0.00
-     - Exposed      0.00  0.85  0.15  0.00
-     - Infected     0.00  0.00  0.86  0.14
+     - Exposed      0.00  0.84  0.16  0.00
+     - Infected     0.00  0.00  0.80  0.20
      - Recovered    0.00  0.00  0.00  1.00
 
 ``` r
 library(data.table)
-incidence <- fread("transitions.tsv")
+incidence <- fread("res/transitions.tsv")
 incidence <- incidence[from == "Susceptible" & to == "Exposed"]
 library(ggplot2)
 ggplot(incidence, aes(x = date, y = counts)) +
@@ -84,3 +84,37 @@ ggplot(incidence, aes(x = date, y = counts)) +
     Warning in scale_y_log10(): log-10 transformation introduced infinite values.
 
 ![](README_files/figure-commonmark/unnamed-chunk-2-1.png)
+
+``` r
+virus_hist <- fread("res/transmissions.tsv")
+
+# Total transmissions
+daily_virus <- virus_hist[, .(count = .N), by = .(virus, date)]
+daily_virus[, t_rate := as.double(gsub(".+-0\\.", "0.", virus))]
+```
+
+    Warning in eval(jsub, SDenv, parent.frame()): NAs introduced by coercion
+
+``` r
+daily_virus[is.na(t_rate), t_rate := fifelse(
+  virus == "Covid-19", .3, .2
+)]
+
+daily_virus[, vlabel := fifelse(grepl("-0\\.", virus), "Flu-variant", virus)]
+
+ggplot(daily_virus, aes(
+  x = date, y = count, color = t_rate, group=t_rate)) +
+  scale_color_distiller(palette="YlOrRd", direction = 1) +
+  geom_line() +
+  geom_point(aes(shape = vlabel)) +
+  scale_y_log10() +
+  theme_dark() +
+  labs(
+    color = "Transmission\nRate",
+    shape = "Variant",
+    x = "Step (time)",
+    y = "Daily incidence (log10)"
+  )
+```
+
+![](README_files/figure-commonmark/variants-1.png)
