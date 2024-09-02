@@ -31,9 +31,9 @@ the n
     Agents' data        : (none)
     Number of entities  : 0
     Days (duration)     : 180 (of 180)
-    Number of viruses   : 137
-    Last run elapsed t  : 748.00ms
-    Last run speed      : 48.10 million agents x day / second
+    Number of viruses   : 205
+    Last run elapsed t  : 1.00s
+    Last run speed      : 35.25 million agents x day / second
     Rewiring            : off
 
     Global events:
@@ -43,7 +43,7 @@ the n
     Virus(es):
      - Covid-19
      - Flu
-     ...and 135 more variants...
+     ...and 203 more variants...
 
     Tool(s):
      - Vaccine
@@ -55,10 +55,10 @@ the n
      - Prob. Transmission   : 0.3000
 
     Distribution of the population at time 180:
-      - (0) Susceptible : 199960 -> 145499
-      - (1) Exposed     :     40 -> 1210
-      - (2) Infected    :      0 -> 1482
-      - (3) Recovered   :      0 -> 51809
+      - (0) Susceptible : 199960 -> 128884
+      - (1) Exposed     :     40 -> 1754
+      - (2) Infected    :      0 -> 2261
+      - (3) Recovered   :      0 -> 67101
 
     Transition Probabilities:
      - Susceptible  1.00  0.00  0.00  0.00
@@ -83,7 +83,7 @@ ggplot(incidence, aes(x = date, y = counts)) +
 
     Warning in scale_y_log10(): log-10 transformation introduced infinite values.
 
-![](README_files/figure-commonmark/unnamed-chunk-2-1.png)
+![](README_files/figure-commonmark/daily-incidence-1.png)
 
 ``` r
 virus_hist <- fread("res/transmissions.tsv")
@@ -106,9 +106,9 @@ ggplot(daily_virus, aes(
   x = date, y = count, color = t_rate, group=t_rate)) +
   scale_color_distiller(palette="YlOrRd", direction = 1) +
   geom_line() +
-  geom_point(aes(shape = vlabel)) +
   scale_y_log10() +
   theme_dark() +
+  facet_wrap(vars(vlabel), nrow = 3) +
   labs(
     color = "Transmission\nRate",
     shape = "Variant",
@@ -118,3 +118,79 @@ ggplot(daily_virus, aes(
 ```
 
 ![](README_files/figure-commonmark/variants-1.png)
+
+``` r
+# Reading and preping the data
+virus_info <- fread("res/virus_info.tsv")
+virus_info[, t_rate := as.double(gsub(".+-0\\.", "0.", virus))]
+```
+
+    Warning in eval(jsub, SDenv, parent.frame()): NAs introduced by coercion
+
+``` r
+virus_info[is.na(t_rate), t_rate := fifelse(
+  virus == "Covid-19", .3, .2
+)]
+
+virus_info[, label := fifelse(
+  virus == "Flu",
+  "Base\nvariant",
+  ""
+)]
+
+# Generating edges
+edges <- virus_info[, .(parent, virus_id)]
+edges <- edges[ parent >= 0 ]
+
+library(netplot)
+```
+
+    Loading required package: grid
+
+``` r
+library(igraph)
+```
+
+
+    Attaching package: 'igraph'
+
+    The following object is masked from 'package:netplot':
+
+        ego
+
+    The following objects are masked from 'package:stats':
+
+        decompose, spectrum
+
+    The following object is masked from 'package:base':
+
+        union
+
+``` r
+virus_net <- graph_from_data_frame(
+  d = edges,
+  vertices = virus_info[virus != "Covid-19"]
+)
+
+
+col <- grDevices::colorRamp(c("yellow", "tomato"))(
+  V(virus_net)$t_rate / 0.7
+) |> rgb(maxColorValue = 255)
+
+set.seed(4341)
+nplot(
+  virus_net,
+  vertex.size = ~ t_rate,
+  vertex.color = col,
+  vertex.label = V(virus_net)$label,
+  edge.curvature = pi/8,
+  edge.line.breaks = 20,
+  vertex.nsides = 20,
+  vertex.label.color = "black",
+  vertex.label.show = 1,
+  vertex.label.fontsize = 10,
+  vertex.size.range = c(.005, .03, 4)
+  )
+```
+
+![](README_files/figure-commonmark/phylogeny-1.png)

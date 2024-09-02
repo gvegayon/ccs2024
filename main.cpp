@@ -36,7 +36,7 @@ EPI_NEW_GLOBALFUN(full_isolation, int)
     if (new_exposed > 1000)
         m->set_param("Contact rate",  0.3);
     if (new_exposed < 100)
-        m->set_param("Contact rate",  5);
+        m->set_param("Contact rate",  10);
 
 };
 
@@ -48,7 +48,7 @@ int main() {
         "Covid-19",
         2e5,    // Population size
         0.0001, // ~20 cases
-        5,      // Contact rate
+        10,      // Contact rate
         0.3,    // Transmission rate
         7.0,    // Mean incubation
         1.0/7.0 // Recovery rate
