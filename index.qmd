@@ -1,0 +1,186 @@
+---
+title: "epiworld(C++ | R | Py): A fast multi-language library for epidemiological agent-based models"
+format:
+  revealjs:
+    slide-number: true
+    embed-resources: true
+    footer: "George G. Vega Yon, Ph.D. -- <https://ggv.cl>"
+    code-annotations: below
+author: 
+  - George G. Vega Yon, Ph.D.
+  - Derek Meyer, M.Sc.
+  - Milo Banks
+  - Matthew Samore, Ph.D.
+institute: The University of Utah
+date: 2024-09-03
+---
+
+
+## Hello world!
+
+Epiworld comes with various (15 currently) built-in models. Here is a simple example of a SIR model in a small-world network.
+
+::: {.columns style="font-size: 70%"}
+::: {.column width="50%"}
+
+```cpp
+#include "epiworld.hpp"
+
+int main() {
+    epiworld::epimodels::ModelSIR<> model( // <1>
+        "Flu", // Name
+        .01,   // Initial infected
+        .2,    // Transmission rate
+        .14    // Recovery rate
+        );
+
+    model.agents_smallworld(               // <2>
+        100000, // Population size
+        10,     // Number of contacts
+        false,  // Directed = false
+        0.01    // Rewiring probability
+        );
+
+    // Running and printing!
+    model.run(100, 771);                   // <3>
+    model.print();                         // <4>
+
+    return 0;
+}
+```
+
+1. Create a SIR model.
+2. Create a small-world network.
+3. Run the model for 100 days.
+4. Print the results.
+:::
+::: {.column width="50%"}
+```bash
+> ./hello-world.o
+_________________________________________________________________________
+Running the model...
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
+ done.
+________________________________________________________________________________
+________________________________________________________________________________
+SIMULATION STUDY
+
+Name of the model   : Susceptible-Infected-Recovered (SIR)
+Population size     : 100000
+Agents' data        : (none)
+Number of entities  : 0
+Days (duration)     : 100 (of 100)
+Number of viruses   : 1
+Last run elapsed t  : 116.00ms
+Last run speed      : 85.53 million agents x day / second
+Rewiring            : off
+
+Global events:
+ (none)
+
+Virus(es):
+ - covid
+
+Tool(s):
+ (none)
+
+Model parameters:
+ - Recovery rate     : 0.1400
+ - Transmission rate : 0.2000
+
+Distribution of the population at time 100:
+  - (0) Susceptible :  99000 -> 495
+  - (1) Infected    :   1000 -> 213
+  - (2) Recovered   :      0 -> 99292
+
+Transition Probabilities:
+ - Susceptible  0.95  0.05  0.00
+ - Infected     0.00  0.86  0.14
+ - Recovered    0.00  0.00  1.00
+```
+:::
+:::
+
+
+## About the software 
+
+::: {.columns style="font-size: 80%"}
+::: {.column width="25%"}
+### Header only
+- Built on the C++ standard library.
+- Easy to port to other languages (R, Python).
+:::
+::: {.column width="25%"}
+### A Framework
+- Highly modular.
+- User-defined states and update dynamics.
+:::
+::: {.column width="25%"}
+### Fast
+- Out-of-the-box parallelism.
+- Up to 100 million agents-day per second.
+:::
+::: {.column width="25%"}
+### Complex models
+- Multi-virus.
+- Evolving virus.
+- Heterogeneous populations.
+:::
+:::
+
+Open-source and CDC-funded.
+
+## Compared to other libraries
+
+::: {.columns style="font-size: 80%"}
+::: {.column width="40%"}
+Simulated a network SIR with 50 K agents:
+
+- Covasim (Python): ~ 1 second (although the model is more complex, SIRd).
+- Epiworld is 3x faster than igraph, 14x faster than AnyLogic, and 28x faster than ABM.
+:::
+::: {.column width="60%"}
+![](fig/epiworld-benchmark.png)
+:::
+:::
+ 
+## Short example: Complex model
+
+- Population of 200 K agents in a connected graph.
+
+- Two initial viruses: COVID-19 and the Flu.
+
+- Mutating virus: Flu has 0.0025 probability of mutating. These change the transmission rate.
+
+- Policy: 60% of vaccinated agents.
+
+- NPI: mask mandate triggers when there are over 1,000 infected agents.
+
+- Health equity: Half agents are 10% less likely to become exposed.
+
+- Parallel computing: run 100 replicates in parallel.
+
+## Short example: Complex model (cont.)
+
+## Some decisions:
+
+1. Why C++?
+
+2. Why discrete time?
+
+
+
+## Challenges 
+
+- How to maximize usage?
+
+- How to make it user-friendly?
+
+- Ease of use vs. flexibility vs. speed.
+
+
+## Thanks!
+
+George G. Vega Yon, Ph.D.
+
+- [gvegayon.github.io](https://gvegayon.github.io)
