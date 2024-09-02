@@ -105,5 +105,4 @@ nplot(
   vertex.label.fontsize = 10,
   vertex.size.range = c(.005, .03, 4)
   )
-
 ```

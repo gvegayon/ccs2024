@@ -25,14 +25,13 @@ EPI_NEW_MUTFUN(flumutates, int)
 
 }
 
+std::vector<int> tmatrix;
 EPI_NEW_GLOBALFUN(full_isolation, int)
 {
         
-    std::vector<int> tmatrix;
     m->get_db().get_today_transition_matrix(tmatrix);
-
-    // Col-major, it is second row
     int new_exposed = tmatrix[4]; 
+    
     if (new_exposed > 1000)
         m->set_param("Contact rate",  0.3);
     if (new_exposed < 100)

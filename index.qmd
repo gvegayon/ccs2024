@@ -1,25 +1,42 @@
 ---
 title: "epiworld"
-subtitle: "A fast multi-language library for epi ABMs"
+subtitle: "A fast multi-language library for epi ABMs<br><br>International Conference on Complex Systems 2024<br>Exeter, UK"
 format:
   revealjs:
     slide-number: true
     embed-resources: true
-    footer: "George G. Vega Yon -- <https://ggv.cl>"
+    footer: "George G. Vega Yon -- <https://ggv.cl/slides/ccs2024>"
     code-annotations: below
+    theme: ["default", "style.scss"]
+    title-slide-attributes: 
+      data-background-image: 'fig/Zoom-Background_PrideU.jpg'
+      data-background-opacity: '0.2'
+      data-background-size: 'contain'
 author: 
-  - George G. Vega Yon
+  - '**George G. Vega Yon**'
   - Derek Meyer
   - Milo Banks
   - Matthew Samore
 institute: The University of Utah
 date: 2024-09-03
+aspectratio: 169
+fig-format: svg
 ---
 
+```{r}
+#| label: preamble
+#| echo: false
+#| warning: false
+#| message: false
+library(data.table)
+library(igraph)
+library(netplot)
+library(ggplot2)
+```
 
 ## Hello world!
 
-::: {.columns style="font-size: 70%"}
+::: {.columns}
 ::: {.column width="50%"}
 
 ```cpp
@@ -99,10 +116,11 @@ Transition Probabilities:
 :::
 :::
 
+Full code available [here](hello-world.cpp){target="_blank"}.
 
 ## About the software 
 
-::: {.columns style="font-size: 80%"}
+::: {.columns}
 ::: {.column width="25%"}
 ### Light
 
@@ -150,7 +168,7 @@ Open-source and CDC-funded.
 
 ## Compared to other libraries
 
-::: {.columns style="font-size: 80%"}
+::: {.columns}
 ::: {.column width="40%"}
 Simulated a network SIR with 50 K agents:
 
@@ -164,9 +182,9 @@ Simulated a network SIR with 50 K agents:
  
 # Example
 
-## A complex model
+## Demo: SEIR model
 
-::: {.columns style="font-size: 70%"}
+::: {.columns}
 ::: {.column width="50%"}
 - SEIR model.
 
@@ -178,7 +196,7 @@ Simulated a network SIR with 50 K agents:
 
 - Policy: 30% of vaccinated agents.
 
-- NPI: full isolation trigerred when the daily cases are above 1,000. Cools downs when below 100.
+- Non-pharmaceutical intervention [NPI] : full isolation trigerred when the daily cases are above 1,000. Cools downs when below 100.
 :::
 ::: {.column width="50%"}
 ```bash
@@ -232,17 +250,12 @@ Transition Probabilities:
 :::
 :::
 
-Full code available [here](main.cpp).
+Full code available [here](main.cpp){target="_blank"}.
 
-## Short example: Complex model (cont.)
+## Demo: Mutating virus {{< fa dna size=.25x >}}
 
-::: {.columns style="font-size: 70%"}
-::: {.column width="50%"}
-- Virus can be multiple.
-- Rates/probabilities can be either fixed or functional (e.g., transmission rate depending on age).
-- Mutation is evaluated at each time step.
-:::
-::: {.column width="50%"}
+::: {style="width: 60%"}
+
 ```cpp
 // Creating the model
 Virus<> flu("Flu");             // <1>
@@ -267,8 +280,128 @@ model.add_virus(flu); // <5>
 3. Define a mutation function.
 4. Define how the virus will be distributed.
 5. Add the virus to the model.
+
 :::
+
+## Demo: Mutating virus {{< fa dna size=.25x >}}
+
+```{r}
+#| label: phylogeny
+#| echo: false
+#| fig-asp: .7
+#| out-width: 100%
+#| fig-align: center
+#| warning: false
+#| fig-cap: "Phylogeny of the flu variants. Each node represents a flu variant colored and sized by the transmission rate (larger+more orange = more transmissible)."
+# Reading and preping the data
+virus_info <- fread("res/virus_info.tsv")
+virus_info[, t_rate := as.double(gsub(".+-0\\.", "0.", virus))]
+virus_info[is.na(t_rate), t_rate := fifelse(
+  virus == "Covid-19", .3, .2
+)]
+
+virus_info[, label := fifelse(
+  virus == "Flu",
+  "Base\nvariant",
+  ""
+)]
+
+# Generating edges
+edges <- virus_info[, .(parent, virus_id)]
+edges <- edges[ parent >= 0 ]
+
+library(netplot)
+library(igraph)
+virus_net <- graph_from_data_frame(
+  d = edges,
+  vertices = virus_info[virus != "Covid-19"]
+)
+
+
+col <- grDevices::colorRamp(c("yellow", "tomato"))(
+  V(virus_net)$t_rate / 0.7
+) |> rgb(maxColorValue = 255)
+
+set.seed(41)
+nplot(
+  virus_net,
+  vertex.size = ~ t_rate,
+  vertex.color = col,
+  vertex.label = V(virus_net)$label,
+  edge.curvature = pi/8,
+  edge.line.breaks = 20,
+  vertex.nsides = 20,
+  vertex.label.color = "black",
+  vertex.label.show = 1,
+  vertex.label.fontsize = 20,
+  vertex.size.range = c(.005, .03, 4)
+  )
+```
+
+## Demo: Non-pharma intervention {{< fa diagram-project size=.25x >}}
+
+::: {style="width: 70%"}
+```cpp
+EPI_NEW_GLOBALFUN(full_isolation, int) // <1>
+{
+        
+    // Getting new exposed from the model
+    m->get_db().get_today_transition_matrix(tmatrix);
+    int new_exposed = tmatrix[4]; 
+    
+    // Applying the policy
+    if (new_exposed > 1000)
+        m->set_param("Contact rate",  0.3);
+    if (new_exposed < 100)
+        m->set_param("Contact rate",  10);
+
+}
+
+model.add_globalevent(full_isolation, "Full isolate", -99); // <2>
+```
+1. Design the intervention.
+2. Add the intervention to the model (-99 = runs daily).
 :::
+
+## Demo: Non-pharma intervention {{< fa diagram-project size=.25x >}}
+
+```{r}
+#| label: variants
+#| echo: false
+#| fig-align: center
+#| fig-asp: .7
+#| out-width: 100%
+#| fig-cap: "Daily incidence of the flu variants. Each line represents a flu variant colored by the transmission rate. The NPI is triggered when the daily cases are above 1,000 and cools down when below 100."
+virus_hist <- fread("res/transmissions.tsv")
+
+# Total transmissions
+daily_virus <- virus_hist[, .(count = .N), by = .(virus, date)]
+daily_virus[, t_rate := as.double(gsub(".+-0\\.", "0.", virus))]
+daily_virus[is.na(t_rate), t_rate := fifelse(
+  virus == "Covid-19", .3, .2
+)]
+
+daily_virus[, vlabel := fifelse(grepl("-0\\.", virus), "Flu-variant", virus)]
+
+ggplot(daily_virus, aes(
+  x = date, y = count, color = t_rate, group=t_rate)) +
+  scale_color_distiller(palette="YlOrRd", direction = 1) +
+  geom_line() +
+  scale_y_log10() +
+  theme_dark() +
+  facet_wrap(vars(vlabel), nrow = 3) +
+  labs(
+    color = "Transmission\nRate",
+    shape = "Variant",
+    x = "Step (time)",
+    y = "Daily incidence (log10)"
+  ) + 
+  # Increase the size fo text
+  theme(
+    text = element_text(size=20)
+  )
+```
+
 
 ## Some decisions:
 
