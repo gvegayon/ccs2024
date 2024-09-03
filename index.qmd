@@ -1,6 +1,6 @@
 ---
-title: "epiworld"
-subtitle: "A fast multi-language library for epi ABMs<br><br>Software and Data for Complex Systems<br><br>Conference on Complex Systems 2024<br>Exeter, UK"
+title: "epiworld: A fast multi-language library for epi ABMs"
+subtitle: "Software and Data for Complex Systems<br><br>Conference on Complex Systems<br>Exeter, UK"
 format:
   revealjs:
     slide-number: true
