@@ -218,9 +218,6 @@ We built epiworld to support our research in epidemiological agent-based models:
 
 ![](fig/model-building.png){width="100%" fig-align="center"}
 
-## Classes {.center}
-
-![](fig/epiworld-schema.png){width="100%" fig-align="center"}
 
 ## Updates {.center}
 
@@ -512,3 +509,9 @@ George G. Vega Yon, Ph.D.
 <https://ggvy.cl>
 :::
 :::
+
+# Appendix {background-color="black"}
+
+## Classes {.center}
+
+![](fig/epiworld-schema.png){width="100%" fig-align="center"}
