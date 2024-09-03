@@ -1,17 +1,18 @@
 ---
 title: "epiworld"
-subtitle: "A fast multi-language library for epi ABMs<br><br>International Conference on Complex Systems 2024<br>Exeter, UK"
+subtitle: "A fast multi-language library for epi ABMs<br><br>Software and Data for Complex Systems<br><br>Conference on Complex Systems 2024<br>Exeter, UK"
 format:
   revealjs:
     slide-number: true
     embed-resources: true
-    footer: "George G. Vega Yon -- <https://ggv.cl/slides/ccs2024>"
+    footer: "Vega Yon *et al.* -- <https://ggv.cl/slides/ccs2024>"
     code-annotations: below
     theme: ["default", "style.scss"]
     title-slide-attributes: 
       data-background-image: 'fig/Zoom-Background_PrideU.jpg'
       data-background-opacity: '0.2'
       data-background-size: 'contain'
+highlight-style: espresso
 author: 
   - '**George G. Vega Yon**'
   - Derek Meyer
@@ -70,7 +71,10 @@ int main() {
 4. Print the results.
 :::
 ::: {.column width="50%"}
-```bash
+```{bash}
+#| eval: false
+#| echo: true
+#| code-line-numbers: "|16,17"
 > ./hello-world.o
 _________________________________________________________________________
 Running the model...
@@ -118,45 +122,52 @@ Transition Probabilities:
 
 Full code available [here](hello-world.cpp){target="_blank"}.
 
-## About the software 
+## About the software
 
-::: {.columns}
-::: {.column width="25%"}
-### Light
+A general framework for epidemiological agent-based models:
+
+::: {.columns style="text-align: center"}
+::: {.column width="25%" .callout}
 
 ::: {style="text-align: center"}
 {{< fa feather  size=2x >}}
 :::
 
+### Lightweight
+
 - Built on the C++ standard library.
 - Easy to port to other languages (R, Python).
 :::
-::: {.column width="25%"}
-### A Framework
+::: {.column width="25%" .callout}
 
 ::: {style="text-align: center"}
 {{< fa diagram-project  size=2x >}}
 :::
 
+### A Framework
+
+
 - Highly modular.
 - User-defined states and update dynamics.
 :::
-::: {.column width="25%"}
-### Fast
+::: {.column width="25%" .callout}
 
 ::: {style="text-align: center"}
 {{< fa rocket  size=2x >}}
 :::
 
+### Fast
+
 - Out-of-the-box parallelism.
 - Up to 100 million agents-day per second.
 :::
-::: {.column width="25%"}
-### Complex 
+::: {.column width="25%" .callout}
 
 ::: {style="text-align: center"}
 {{< fa dna  size=2x >}}
 :::
+
+### Complex 
 
 - Multi-virus.
 - Evolving virus.
@@ -164,23 +175,28 @@ Full code available [here](hello-world.cpp){target="_blank"}.
 :::
 :::
 
-Open-source and CDC-funded.
 
-## Compared to other libraries
+## About the software: research
 
-::: {.columns}
-::: {.column width="40%"}
-Simulated a network SIR with 50 K agents:
+We built epiworld to support our research in epidemiological agent-based models:
 
-- Covasim (Python): ~ 1 second (although the model is more complex, SIRd).
-- Epiworld is 3x faster than igraph, 14x faster than AnyLogic, and 28x faster than ABM.
-:::
-::: {.column width="60%"}
-![](fig/epiworld-benchmark.png)
-:::
-:::
- 
-# Example
+> Meyer, Derek and Vega Yon, George (2023). *epiworldR: Fast Agent-Based
+  Epi Models*. Journal of Open Source Software, 8(90), 5781,
+  <https://doi.org/10.21105/joss.05781>
+
+- Existing packages: [epiworldR](https://cran.r-project.org/package=epiworldR) (on CRAN), [epiworldRShiny](https://cran.r-project.org/package=epiworldRShiny), [epiworldpy](https://github.com/UofUEpiBio/epiworldpy) (on CRAN), and [epiworldweb](https://github.com/UofUEpiBio/epiworldweb) (the last two under development).
+
+- Research projects involving epiworld:
+  
+  1. **Calibration of ABMs via machine learning** (large number of simulations).
+  2. Forecasting models with **mechanistic machine learning** (also large number of simulations).
+  3. Reproductive number **estimation methods** applied to ABMs.
+  4. How **network properties** affect epidemiological statistics.
+  5. Theoretical distribution of Rt and Generation Time in **ABMs**.
+
+
+
+# Example {background-color="black"}
 
 ## Demo: SEIR model
 
@@ -197,9 +213,13 @@ Simulated a network SIR with 50 K agents:
 - Policy: 30% of vaccinated agents.
 
 - Non-pharmaceutical intervention [NPI] : full isolation trigerred when the daily cases are above 1,000. Cools downs when below 100.
+
 :::
 ::: {.column width="50%"}
-```bash
+```{bash}
+#| eval: false
+#| echo: true
+#| code-line-numbers: "|9,12,14"
 Running the model...
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
  done.
@@ -402,26 +422,60 @@ ggplot(daily_virus, aes(
   )
 ```
 
+## Demo: Speed-wise {{< fa rocket size=.25x >}}
 
-## Some decisions:
+- This experiment (200 K agents for 180 days) took 1 second to run. As a reference, here is a comparison with other tools (different model):
 
-1. Why C++?
+::: {.columns}
+::: {.column width="40%"}
+Simulated a network SIR with 50 K agents:
 
-2. Why discrete time?
+- Covasim (Python): ~ 1 second (although the model is more complex, SIRd).
+- Epiworld is 3x faster than igraph, 14x faster than AnyLogic, and 28x faster than ABM.
+:::
+::: {.column width="60%"}
+![](fig/epiworld-benchmark.png)
+:::
+:::
+
+## Demo: Full code
+
+```{r}
+#| echo: false
+#| output: asis
+cat("```cpp\n")
+cat(readLines("main.cpp"), sep = "\n")
+cat("```")
+```
+
+# Final thoughts {background-color="black"}
+
+## Final thoughts
+
+- `epiworld` is a **fast C++ library** for epidemiological agent-based models.
+
+- Actively developed and featured in various Epi ABM studies.
+
+- User-friendly versions exist for **R and Python**.
+
+- It's a **framework**: you can define your own states and update dynamics.
+
+- You can get it at <https://github.com/UofUEpiBio/epiworld>.
 
 
 
-## Challenges 
+<br>
 
-- How to maximize usage?
+::: {.fragment}
+### Thanks!
 
-- How to make it user-friendly?
+::: { style="text-align: center"}
+{{< fa feather size=2x >}} {{< fa diagram-project  size=2x >}} {{< fa rocket  size=2x >}} {{< fa dna  size=2x >}}
 
-- Ease of use vs. flexibility vs. speed.
-
-
-## Thanks!
+epiworld: "A fast multi-language library for epi ABMs"
 
 George G. Vega Yon, Ph.D.
 
-- [gvegayon.github.io](https://gvegayon.github.io)
+<https://ggvy.cl>
+:::
+:::
