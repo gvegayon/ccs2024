@@ -184,7 +184,9 @@ We built epiworld to support our research in epidemiological agent-based models:
   Epi Models*. Journal of Open Source Software, 8(90), 5781,
   <https://doi.org/10.21105/joss.05781>
 
-- Existing packages: [epiworldR](https://cran.r-project.org/package=epiworldR) (on CRAN), [epiworldRShiny](https://cran.r-project.org/package=epiworldRShiny), [epiworldpy](https://github.com/UofUEpiBio/epiworldpy) (on CRAN), and [epiworldweb](https://github.com/UofUEpiBio/epiworldweb) (the last two under development).
+- Core library: [epiworld (C++)](https://github.com/UofUEpiBio/epiworld) [![codecov](https://codecov.io/gh/UofUEpiBio/epiworld/graph/badge.svg?token=CPDYG4HA0B)](https://codecov.io/gh/UofUEpiBio/epiworld).
+
+- Existing packages: [epiworldR](https://cran.r-project.org/package=epiworldR) (on CRAN), [epiworldRShiny](https://cran.r-project.org/package=epiworldRShiny) (on CRAN), [epiworldpy](https://github.com/UofUEpiBio/epiworldpy), and [epiworldweb](https://github.com/UofUEpiBio/epiworldweb) (the last two under development).
 
 - Research projects involving epiworld:
   
