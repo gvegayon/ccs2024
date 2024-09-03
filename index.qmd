@@ -18,7 +18,8 @@ author:
   - Derek Meyer
   - Milo Banks
   - Matthew Samore
-institute: The University of Utah
+institute:
+  - The University of Utah
 date: 2024-09-03
 aspectratio: 169
 fig-format: svg
@@ -37,8 +38,10 @@ library(ggplot2)
 
 ## Hello world!
 
+Susceptible-Infected-Recovered [SIR] model in epiworld:
+
 ::: {.columns}
-::: {.column width="50%"}
+::: {.column width="50%" .incremental}
 
 ```cpp
 #include "epiworld.hpp"
@@ -127,7 +130,7 @@ Full code available [here](hello-world.cpp){target="_blank"}.
 A general framework for epidemiological agent-based models:
 
 ::: {.columns style="text-align: center"}
-::: {.column width="25%" .callout}
+::: {.column width="25%" .callout .fragment}
 
 ::: {style="text-align: center"}
 {{< fa feather  size=2x >}}
@@ -138,7 +141,7 @@ A general framework for epidemiological agent-based models:
 - Built on the C++ standard library.
 - Easy to port to other languages (R, Python).
 :::
-::: {.column width="25%" .callout}
+::: {.column width="25%" .callout .fragment}
 
 ::: {style="text-align: center"}
 {{< fa diagram-project  size=2x >}}
@@ -150,7 +153,7 @@ A general framework for epidemiological agent-based models:
 - Highly modular.
 - User-defined states and update dynamics.
 :::
-::: {.column width="25%" .callout}
+::: {.column width="25%" .callout .fragment}
 
 ::: {style="text-align: center"}
 {{< fa rocket  size=2x >}}
@@ -161,7 +164,7 @@ A general framework for epidemiological agent-based models:
 - Out-of-the-box parallelism.
 - Up to 100 million agents-day per second.
 :::
-::: {.column width="25%" .callout}
+::: {.column width="25%" .callout .fragment}
 
 ::: {style="text-align: center"}
 {{< fa dna  size=2x >}}
@@ -175,6 +178,17 @@ A general framework for epidemiological agent-based models:
 :::
 :::
 
+::: {.fragment}
+Various built-in models, including:
+
+- Susceptible-Infected-Recovered [SIR].
+- Susceptible-Exposed-Infected-Recovered [SEIR].
+- Susceptible-Infected-Susceptible [SIS].
+- Susceptible-Infected-Recovered-Decesed [SIRD].
+- ...
+
+Networked and non-networked versions.
+:::
 
 ## About the software: research
 
@@ -188,6 +202,7 @@ We built epiworld to support our research in epidemiological agent-based models:
 
 - Existing packages: [epiworldR](https://cran.r-project.org/package=epiworldR) (on CRAN), [epiworldRShiny](https://cran.r-project.org/package=epiworldRShiny) (on CRAN), [epiworldpy](https://github.com/UofUEpiBio/epiworldpy), and [epiworldweb](https://github.com/UofUEpiBio/epiworldweb) (the last two under development).
 
+::: {.fragment}
 - Research projects involving epiworld:
   
   1. **Calibration of ABMs via machine learning** (large number of simulations).
@@ -195,15 +210,28 @@ We built epiworld to support our research in epidemiological agent-based models:
   3. Reproductive number **estimation methods** applied to ABMs.
   4. How **network properties** affect epidemiological statistics.
   5. Theoretical distribution of Rt and Generation Time in **ABMs**.
+:::
 
+# Architecture {background-color="black"}
 
+## Model building {.center}
+
+![](fig/model-building.png){width="100%" fig-align="center"}
+
+## Classes {.center}
+
+![](fig/epiworld-schema.png){width="100%" fig-align="center"}
+
+## Updates {.center}
+
+![](fig/epiworld-agent-update.png){width="100%" fig-align="center"}
 
 # Example {background-color="black"}
 
 ## Demo: SEIR model
 
 ::: {.columns}
-::: {.column width="50%"}
+::: {.column width="50%" .incremental}
 - SEIR model.
 
 - Population of 200 K agents in a connected graph.
@@ -276,7 +304,7 @@ Full code available [here](main.cpp){target="_blank"}.
 
 ## Demo: Mutating virus {{< fa dna size=.25x >}}
 
-::: {style="width: 60%"}
+::: {style="width: 60%" .incremental}
 
 ```cpp
 // Creating the model
@@ -340,7 +368,7 @@ virus_net <- graph_from_data_frame(
 )
 
 
-col <- grDevices::colorRamp(c("yellow", "tomato"))(
+col <- grDevices::colorRamp(c("steelblue", "tomato"))(
   V(virus_net)$t_rate / 0.7
 ) |> rgb(maxColorValue = 255)
 
@@ -356,13 +384,13 @@ nplot(
   vertex.label.color = "black",
   vertex.label.show = 1,
   vertex.label.fontsize = 20,
-  vertex.size.range = c(.005, .03, 4)
+  vertex.size.range = c(.01, .03, 4)
   )
 ```
 
 ## Demo: Non-pharma intervention {{< fa diagram-project size=.25x >}}
 
-::: {style="width: 70%"}
+::: {style="width: 70%" .incremental}
 ```cpp
 EPI_NEW_GLOBALFUN(full_isolation, int) // <1>
 {
@@ -426,10 +454,10 @@ ggplot(daily_virus, aes(
 
 ## Demo: Speed-wise {{< fa rocket size=.25x >}}
 
-- This experiment (200 K agents for 180 days) took 1 second to run. As a reference, here is a comparison with other tools (different model):
+This experiment (200 K agents for 180 days) took 1 second to run. As a reference, here is a comparison with other tools (different model):
 
 ::: {.columns}
-::: {.column width="40%"}
+::: {.column width="40%" .incremental}
 Simulated a network SIR with 50 K agents:
 
 - Covasim (Python): ~ 1 second (although the model is more complex, SIRd).
@@ -452,8 +480,9 @@ cat("```")
 
 # Final thoughts {background-color="black"}
 
-## Final thoughts
+## Final thoughts 
 
+::: {.incremental}
 - `epiworld` is a **fast C++ library** for epidemiological agent-based models.
 
 - Actively developed and featured in various Epi ABM studies.
@@ -464,6 +493,8 @@ cat("```")
 
 - You can get it at <https://github.com/UofUEpiBio/epiworld>.
 
+- We are looking for **collaborators** and **contributors**!
+:::
 
 
 <br>
